@@ -1,17 +1,25 @@
+
 import streamlit as st
 import pandas as pd
 import pickle
 import matplotlib.pyplot as plt
+import os
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, r2_score
 
+# Get correct project directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+MODEL_PATH = os.path.join(BASE_DIR, "model.pkl")
+DATA_PATH = os.path.join(BASE_DIR, "dataset.csv")
+
 # Load trained model
-with open("model.pkl", "rb") as file:
+with open(MODEL_PATH, "rb") as file:
     model = pickle.load(file)
 
 # Load dataset
-data = pd.read_csv("dataset.csv")
+data = pd.read_csv(DATA_PATH)
 
 # Prepare test data
 X = data[['study_hours', 'attendance', 'previous_marks']]
@@ -35,7 +43,6 @@ st.write("Predict student marks using Machine Learning")
 st.header("Model Evaluation")
 
 col1, col2 = st.columns(2)
-
 col1.metric("Mean Absolute Error", f"{mae:.2f}")
 col2.metric("R2 Score", f"{r2:.3f}")
 
@@ -62,9 +69,11 @@ if st.button("Predict Marks"):
     })
 
     prediction = model.predict(student)
-    st.success(f"Predicted Final Marks: {prediction[0]:.2f}")
+    st.success(
+        f"Predicted Final Marks: {prediction[0]:.2f}"
+    )
 
-# Visualizations
+# Data Visualization
 st.header("Data Visualization")
 
 # Graph 1
